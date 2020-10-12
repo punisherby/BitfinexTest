@@ -21,7 +21,6 @@ const getTickerRequestSaga = function* (action) {
   try {
     const response = yield call(apis.getTicker, symbol);
     if (response && httpSuccessChecker(response) && response.data) {
-        console.log(response.data);
         yield put($A(GLOBAL_ACTIONS.GET_TICKER_SUCCESS, response.data));
     } else {
       throw new Error();

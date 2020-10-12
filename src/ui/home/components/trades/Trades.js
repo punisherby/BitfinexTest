@@ -5,6 +5,7 @@ import store from '../../../../redux/configureStore';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import moment from "moment";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const msg = JSON.stringify({
     event: 'subscribe',
@@ -17,7 +18,7 @@ class Trades extends PureComponent {
     constructor() {
         super();
 
-        //this._connectWebSocket();
+        this._connectWebSocket();
     }
 
     render() {
@@ -62,7 +63,7 @@ class Trades extends PureComponent {
             cols.push(
                 <View key={singleItem[1] + Math.random()} style={{flexDirection: "row", justifyContent: "space-between", backgroundColor: singleItem[2] > 0 ? "#294538" : "#4e3934", marginBottom: 1}}>
                     <View style={{flex: 0.13, alignItems: "center"}}>
-                        <Text style={{color: "#FFFFFF", fontSize: 12}}>{singleItem[2] > 0 ? "up" : "down"}</Text>
+                        <Text style={{color: "#FFFFFF", fontSize: 12}}>{singleItem[2] > 0 ? <Icon name="arrow-up" size={20} color="green" /> : <Icon name="arrow-down" size={20} color="red" />}</Text>
                     </View>
                     <View style={{flex: 0.29, alignItems: "flex-start"}}>
                         <Text style={{color: "#FFFFFF", fontSize: 12}}>{moment.unix(singleItem[1]).local().format("HH:MM:ss")}</Text>
@@ -91,7 +92,6 @@ class Trades extends PureComponent {
         this.socket.onmessage = (e) => {
             if (!e.data.includes('hb')) {
 
-                console.log("trades =>", e.data);
                 if(e.data.includes(",[[")) {
                     let dataArr = e.data.split(",[[", 2);
                     if(dataArr && dataArr[1]) {
@@ -132,7 +132,7 @@ class Trades extends PureComponent {
 
 const styles = {
     mainContainer: {
-        height: 300,
+        height: 400,
         width: null,
         marginHorizontal: 20,
         paddingHorizontal: 5,

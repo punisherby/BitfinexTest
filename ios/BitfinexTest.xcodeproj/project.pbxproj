@@ -194,7 +194,6 @@
 				0AF9C28ACD38D3ED505AB7DA /* Pods-BitfinexTest-tvOSTests.debug.xcconfig */,
 				B62F4543FA890A613A24B867 /* Pods-BitfinexTest-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

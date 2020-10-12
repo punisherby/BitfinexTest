@@ -149,8 +149,6 @@ class OrderBook extends PureComponent {
         this.socket.onmessage = (e) => {
             if (!e.data.includes('hb')) {
 
-                console.log(e.data);
-
                 if(e.data.includes(",[[")) {
                     let dataArr = e.data.split(",[[", 2);
                     if(dataArr && dataArr[1]) {
@@ -191,7 +189,7 @@ class OrderBook extends PureComponent {
 
 const styles = {
     mainContainer: {
-        height: 300,
+        height: 350,
         width: null,
         marginHorizontal: 20,
         paddingHorizontal: 5,
