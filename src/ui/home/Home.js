@@ -8,6 +8,10 @@ const msg = JSON.stringify({
     event: 'subscribe',
     channel: 'ticker',
     symbol: 'tBTCUSD'
+}, {
+    event: 'subscribe',
+    channel: 'ticker',
+    symbol: 'tZECUSD'
 })
 
 export default class Home extends React.Component{
