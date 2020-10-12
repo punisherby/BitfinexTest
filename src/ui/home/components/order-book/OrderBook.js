@@ -1,9 +1,10 @@
-import {View, Text, ScrollView, ActivityIndicator, Dimensions} from 'react-native';
+import {View, Text, ScrollView, ActivityIndicator, Dimensions, TouchableOpacity} from 'react-native';
 import React, {PureComponent} from 'react';
 import {GLOBAL_ACTIONS} from '../../../../redux/actionTypes';
 import store from '../../../../redux/configureStore';
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const msg = JSON.stringify({
     event: 'subscribe',
@@ -17,6 +18,10 @@ const screenWidthAfterMarginAndPaddings = Dimensions.get('window').width - 50;
 
 class OrderBook extends PureComponent {
 
+    state= {
+        zoomFactor: 1
+    }
+
     constructor() {
         super();
 
@@ -29,8 +34,12 @@ class OrderBook extends PureComponent {
 
         return (
             <View style={styles.mainContainer}>
-                <View style={{padding: 10, borderBottomWidth: 0.5, borderBottomColor: "#DDDDDD"}}>
+                <View style={{padding: 10, borderBottomWidth: 0.5, borderBottomColor: "#DDDDDD", flexDirection: "row", justifyContent: "space-between"}}>
                     <Text style={{color: "#FFFFFF", fontSize: 16, fontWeight: "bold"}}>ORDER BOOK <Text style={{fontWeight: "normal"}}>BTC/USD</Text></Text>
+                    <View style={{flexDirection: "row"}}>
+                        <TouchableOpacity onPress={() => this._zoomInPressed()}><Icon name="zoom-in" size={20} color="white" /></TouchableOpacity>
+                        <TouchableOpacity onPress={() => this._zoomOutPressed()}><Icon name="zoom-out" size={20} color="white" /></TouchableOpacity>
+                    </View>
                 </View>
                 <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 6}}>
                     <View style={{flexDirection: "row", flex: 0.5, justifyContent: "space-between"}}>
@@ -77,7 +86,7 @@ class OrderBook extends PureComponent {
             total+= Math.abs(_.round(singleItem[2], 4));
             cols.push(
                 <View key={singleItem[0] + Math.random()} style={{flex: 1, flexDirection: "row", justifyContent: "space-between"}}>
-                    <View style={{right: 0, position: "absolute", backgroundColor: "green", height: 20, width: (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
+                    <View style={{right: 0, position: "absolute", backgroundColor: "green", height: 20, width: this.state.zoomFactor * (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
                     <View style={{flex: 0.35, alignItems: "center"}}>
                         <Text style={{color: "#FFFFFF", fontSize: 12}}>{_.round(total, 2)}</Text>
                     </View>
@@ -106,7 +115,7 @@ class OrderBook extends PureComponent {
             total+= Math.abs(_.round(singleItem[2], 4));
             cols.push(
                 <View key={singleItem[0] + Math.random()} style={{flex: 1, flexDirection: "row", justifyContent: "space-between"}}>
-                    <View style={{left: 0, position: "absolute", backgroundColor: "red", height: 20, width: (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
+                    <View style={{left: 0, position: "absolute", backgroundColor: "red", height: 20, width: this.state.zoomFactor * (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
                     <View style={{flex: 0.35, alignItems: "center"}}>
                         <Text style={{color: "#FFFFFF", fontSize: 12}}>{_.round(singleItem[0])}</Text>
                     </View>
@@ -184,6 +193,18 @@ class OrderBook extends PureComponent {
                 this.socket = new WebSocket('wss://api-pub.bitfinex.com/ws/2');
             }, 1000);
         };
+    }
+
+    _zoomInPressed() {
+        let zoomInFactor = this.state.zoomFactor + 0.2;
+
+        this.setState({ zoomFactor:  zoomInFactor > 2 ? 2 : zoomInFactor});
+    }
+
+    _zoomOutPressed() {
+        let zoomInFactor = this.state.zoomFactor - 0.2;
+
+        this.setState({ zoomFactor:  zoomInFactor <= 0.2 ? 0.2 : zoomInFactor});
     }
 }
 
