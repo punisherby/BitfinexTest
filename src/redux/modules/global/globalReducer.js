@@ -1,10 +1,11 @@
 import {
   GET_TICKER_SUCCESS,
+  SET_BTC_TICKER
 } from "./globalActionTypes";
 
 
 const initialGlobalState = {
-  tickers: {}
+  btcTicker: []
 };
 
 //************************ REDUCER ************************************
@@ -18,8 +19,14 @@ export const globalReducer = (state = initialGlobalState, action) => {
         ...state,
         tickers: {}
       };
-      return newState;
-
+      return newState; break;
+    case SET_BTC_TICKER:
+      action.payload;
+      newState = {
+        ...state,
+        btcTicker: action.payload.split(",")
+      };
+      return newState; break;
     default:
       return state;
   }
