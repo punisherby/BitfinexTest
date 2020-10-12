@@ -1,15 +1,19 @@
-import {View} from "react-native";
-import React, {PureComponent} from 'react';
+import {View, ScrollView} from "react-native";
+import React from 'react';
 import OrderBook from './components/order-book/OrderBook';
 import Ticker from './components/ticker/Ticker';
+import Trades from './components/trades/Trades';
 
-export default class Home extends PureComponent{
+export default class Home extends React.Component{
     render() {
         return (
-            <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+            <ScrollView contentContainerStyle={{flex: 1, width: null, height: null}}>
                 <Ticker></Ticker>
+                <View style={{height: 10}}></View>
                 <OrderBook></OrderBook>
-            </View>
+                <View style={{height: 10}}></View>
+                <Trades></Trades>
+            </ScrollView>
         )
     }
 }

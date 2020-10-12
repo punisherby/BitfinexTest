@@ -32,6 +32,7 @@ const getTickerRequestSaga = function* (action) {
   }
 };
 
+// I HAVE INTEGRATED REDUX SAGA BUT WAS NOT NEEDED SINCE WE ONLY WORKED WITH REDUX SAGA FOR THE EXAM!!!
 export default function* rootSaga() {
   yield takeLatest(GLOBAL_ACTIONS.GET_TICKER_REQUEST, getTickerRequestSaga);
 }
