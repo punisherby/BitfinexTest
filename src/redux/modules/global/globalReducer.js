@@ -54,7 +54,7 @@ export const globalReducer = (state = initialGlobalState, action) => {
       }).sort((a,b) => {
         let singleItemA = a.split(",");
         let singleItemB = b.split(",");
-        if(singleItemA[0] > singleItemB[0]) return true;
+        return singleItemB[0] - singleItemA[0];
       }).slice(0,20);
 
       let filterNegative = tmpOrderBookInitializeArr.filter((item) => {
@@ -63,7 +63,7 @@ export const globalReducer = (state = initialGlobalState, action) => {
       }).sort((a,b) => {
         let singleItemA = a.split(",");
         let singleItemB = b.split(",");
-        if(singleItemA[0] > singleItemB[0]) return true;
+        return singleItemA[0] - singleItemB[0];
       }).slice(0,20);
 
       newState = {
@@ -77,12 +77,20 @@ export const globalReducer = (state = initialGlobalState, action) => {
       let singleItem = action.payload.split(",");
       if(singleItem[2] > 0) {
         let tmpOrderBookBuyArr = [...state.orderbookBuyStream];
+        tmpOrderBookBuyArr = tmpOrderBookBuyArr.filter((item) => {
+          let subItem = item.split(",");
+          if(subItem[0] != singleItem[0]) {
+            return true;
+          }
+          return false;
+        })
         tmpOrderBookBuyArr.push(action.payload);
         tmpOrderBookBuyArr.sort((a,b) => {
           let singleItemA = a.split(",");
           let singleItemB = b.split(",");
-          if(singleItemA[0] > singleItemB[0]) return true;
-        }).slice(0,20);
+          return singleItemB[0] - singleItemA[0];
+        });
+        tmpOrderBookBuyArr = tmpOrderBookBuyArr.slice(0,20);
 
         newState = {
           ...state,
@@ -90,12 +98,20 @@ export const globalReducer = (state = initialGlobalState, action) => {
         };
       } else {
         let tmpOrderBookSellArr = [...state.orderbookSellStream];
+        tmpOrderBookSellArr = tmpOrderBookSellArr.filter((item) => {
+          let subItem = item.split(",");
+          if(subItem[0] != singleItem[0]) {
+            return true;
+          }
+          return false;
+        })
         tmpOrderBookSellArr.push(action.payload);
         tmpOrderBookSellArr.sort((a,b) => {
           let singleItemA = a.split(",");
           let singleItemB = b.split(",");
-          if(singleItemA[0] > singleItemB[0]) return true;
-        }).slice(0,20);
+          return singleItemA[0] - singleItemB[0];
+        });
+        //tmpOrderBookSellArr = tmpOrderBookSellArr.slice(0,20);
 
         newState = {
           ...state,

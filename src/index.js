@@ -22,8 +22,8 @@ export default class App extends React.Component {
                     }}
                 >
                     <NavigationContainer ref={navigationRef}>
-                        <Stack.Navigator initialRouteName="Bitfinex">
-                            <Stack.Screen name="Bitfinex" component={Home} />
+                        <Stack.Navigator initialRouteName="Bitfinex App">
+                            <Stack.Screen name="Bitfinex App" component={Home} />
                         </Stack.Navigator>
                     </NavigationContainer>
                 </View>

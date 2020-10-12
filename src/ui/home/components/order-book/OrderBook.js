@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, ActivityIndicator} from 'react-native';
+import {View, Text, ScrollView, ActivityIndicator, Dimensions} from 'react-native';
 import React, {PureComponent} from 'react';
 import {GLOBAL_ACTIONS} from '../../../../redux/actionTypes';
 import store from '../../../../redux/configureStore';
@@ -13,6 +13,8 @@ const msg = JSON.stringify({
     freq:'F1'
 })
 
+const screenWidthAfterMarginAndPaddings = Dimensions.get('window').width - 50;
+
 class OrderBook extends PureComponent {
 
     constructor() {
@@ -22,6 +24,9 @@ class OrderBook extends PureComponent {
     }
 
     render() {
+
+        let maxOfCumulatives = this._findMaxOfCumulatives();
+
         return (
             <View style={styles.mainContainer}>
                 <View style={{padding: 10, borderBottomWidth: 0.5, borderBottomColor: "#DDDDDD"}}>
@@ -47,17 +52,17 @@ class OrderBook extends PureComponent {
                 </View>
                 <ScrollView contentContainerStyle={{flexDirection: "row", justifyContent: "space-between", paddingTop: 4}}>
                     <View style={{flex: 0.5, justifyContent: "space-between"}}>
-                        {this._renderTradesBuyData()}
+                        {this._renderTradesBuyData(maxOfCumulatives)}
                     </View>
                     <View style={{flex: 0.5, justifyContent: "space-between"}}>
-                        {this._renderTradesSellData()}
+                        {this._renderTradesSellData(maxOfCumulatives)}
                     </View>
                 </ScrollView>
             </View>
         );
     }
 
-    _renderTradesBuyData() {
+    _renderTradesBuyData(maxOfCumulatives) {
         const{orderbookBuyStream}= this.props;
 
         if(!orderbookBuyStream || orderbookBuyStream.length == 0) {
@@ -72,6 +77,7 @@ class OrderBook extends PureComponent {
             total+= Math.abs(_.round(singleItem[2], 4));
             cols.push(
                 <View key={singleItem[0] + Math.random()} style={{flex: 1, flexDirection: "row", justifyContent: "space-between"}}>
+                    <View style={{right: 0, position: "absolute", backgroundColor: "green", height: 20, width: (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
                     <View style={{flex: 0.35, alignItems: "center"}}>
                         <Text style={{color: "#FFFFFF", fontSize: 12}}>{_.round(total, 2)}</Text>
                     </View>
@@ -85,7 +91,7 @@ class OrderBook extends PureComponent {
         return cols;
     }
 
-    _renderTradesSellData() {
+    _renderTradesSellData(maxOfCumulatives) {
         const{orderbookSellStream}= this.props;
 
         if(!orderbookSellStream || orderbookSellStream.length == 0) {
@@ -100,6 +106,7 @@ class OrderBook extends PureComponent {
             total+= Math.abs(_.round(singleItem[2], 4));
             cols.push(
                 <View key={singleItem[0] + Math.random()} style={{flex: 1, flexDirection: "row", justifyContent: "space-between"}}>
+                    <View style={{left: 0, position: "absolute", backgroundColor: "red", height: 20, width: (screenWidthAfterMarginAndPaddings/2) * ((1 * total) / maxOfCumulatives)}}></View>
                     <View style={{flex: 0.35, alignItems: "center"}}>
                         <Text style={{color: "#FFFFFF", fontSize: 12}}>{_.round(singleItem[0])}</Text>
                     </View>
@@ -113,8 +120,22 @@ class OrderBook extends PureComponent {
         return cols;
     }
 
-    _calculateTotal() {
-        _
+    _findMaxOfCumulatives() {
+        const{orderbookBuyStream, orderbookSellStream}= this.props;
+
+        let cumulutativeBuyTotal = 0;
+            orderbookBuyStream.forEach((item) => {
+            const singleItem = item.split(",");
+            cumulutativeBuyTotal+= Math.abs(_.round(singleItem[2], 4));
+        });
+
+        let cumulutativeSellTotal = 0;
+        orderbookSellStream.forEach((item) => {
+            let singleItem = item.split(",");
+            return cumulutativeSellTotal+= Math.abs(_.round(singleItem[2], 4));
+        });
+
+        return Math.max(cumulutativeBuyTotal, cumulutativeSellTotal);
     }
 
     _connectWebSocket() {
@@ -127,6 +148,9 @@ class OrderBook extends PureComponent {
 
         this.socket.onmessage = (e) => {
             if (!e.data.includes('hb')) {
+
+                console.log(e.data);
+
                 if(e.data.includes(",[[")) {
                     let dataArr = e.data.split(",[[", 2);
                     if(dataArr && dataArr[1]) {
